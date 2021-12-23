@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>{{ title }} {{ request.user.first_name | title }}</h1>
+        <hr>
+        {% block content %}
+        {% endblock %}
+        {% comment %}
+        <br>
+        {{ now|date:"d/m/Y h:m" }}
+        <br>
+        {{ name }}
+        <img |src="{% static 'img/640px-Python-logo-notext.svg.png' %}" height="80px" width="80px"/>
+        {% endcomment %}
+    </body>
+</html>
