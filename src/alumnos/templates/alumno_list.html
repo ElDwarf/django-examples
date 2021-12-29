@@ -4,17 +4,40 @@
 
 
 {% block content %}
-{% for item in alumnos%}
-<p><a href="/alumnos/{{ item.id }}">{{ item.last_name }}, {{ item.first_name }}</a></p>
-{% endfor %}
-<br><br><br><br><br>
-<form method="POST" action=".">
-{% csrf_token %}
-{{ form }}
-<button type="submit">Enviar</button>
-</form>
-{% if error %}
-Error de validacion en el formulario
-{% endif %}
+    <div class="row">
+      <div class="col col-sm-12 col-lg-8">
+        <table class="table table-striped">
+            <thead>
+                <th id="titulo1" >Apellido</th>
+                <th  class="titulo">Nombre</th>
+                <th>Accion</th>
+            </thead>
+            <tbody>
+                {% for item in alumnos%}
+                <tr>
+                    <td>{{ item.last_name }}</td>
+                    <td class="link">{{ item.first_name }}</td>
+                    <td><a href="/alumnos/{{ item.id }}">Detalle</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col col-sm-12 col-lg-4">
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            Error de validacion en el formulario
+        </div>
+        {% endif %}
+        <form method="POST" action=".">
+            {% csrf_token %}
+            {{ form }}
+            <br>
+            <button type="submit" class="success button">Enviar</button>
+        </form>
+    </div>
+</div>
+
+
 
 {% endblock %}

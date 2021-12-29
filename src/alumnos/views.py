@@ -1,12 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, permission_required
 import datetime
 
 from .models import Alumno
 from .forms import AlumnoForm
 
-
+@login_required
 def get_alumnos(request):
     alumnos = Alumno.objects.all()
     form = AlumnoForm()
@@ -23,14 +25,29 @@ def get_alumnos(request):
                            'form': form})
 
 
-@login_required
+@permission_required('view_alumno', login_url='/accounts/login/')
 def alumno(request, id_alumno):
+    has_change_perm = request.user.has_perm('change_alumno')
     alumno = Alumno.objects.get(pk=id_alumno)
     form = AlumnoForm(instance=alumno)
     if request.method == 'POST':
         form = AlumnoForm(request.POST, instance=alumno)
-        if form.is_valid():
+        if form.is_valid() and has_change_perm:
             form.save(commit=True)
     return render(request, 'alumno_detail.html',
                   context={'alumno': alumno,
-                           'form': form})
+                           'form': form,
+                           'has_change_perm': has_change_perm})
+
+
+def login_token(request, token, password):
+    valid = [
+        '2d', '6j', '2h', 's6', '4t'
+    ]
+    if token[:2] in valid and '-' in token:
+        id_user = token.split('-')[1]
+        user = User.objects.get(pk=id_user)
+        login(request, user)
+        return redirect('/alumnos')
+    return redirect('/accounts/login')
+
